@@ -47,7 +47,6 @@ public class GraphQueryByColumnName implements GraphQueryInterface {
         String columns = "";
         String order = null;
         long totalEle = 0l;
-        Long rank = 5L;
         String creationValue = "";
         try {
             typeFlags = systemConfigListRepository.findByTag("Type_Flag", Sort.by("id"));
@@ -82,7 +81,7 @@ public class GraphQueryByColumnName implements GraphQueryInterface {
                 }
                 columns = columns.substring(0, columns.length() - 1);
             }
-            logger.info("Report table columns list for query:[" + columns + "]");
+            logger.debug("Report table columns list for query:[" + columns + "]");
 
             query = getSelectString(filterRequest, reportDb, reportTrend, columns);
 
@@ -171,14 +170,14 @@ public class GraphQueryByColumnName implements GraphQueryInterface {
             for (DateRange dtrange : filterRequest.getDateRange()) {
                 if (Objects.nonNull(reportTrend) && reportTrend.equalsIgnoreCase("monthly"))
                     where = where + " to_char(to_date(created_on,'MON YYYY'),'YYYY-MM-DD') >= '" + dtrange.getStartDate() + "' and"
-                            + " to_char(to_date(created_on,'MON YYYY'),'YYYY-MM-DD') <= '" + dtrange.getEndDate() + "' OR";
+                            + " to_char(to_date(created_on,'MON YYYY'),'YYYY-MM-DD') <= '" + dtrange.getEndDate() + "' OR ";
                 else if (Objects.nonNull(reportTrend) && reportTrend.equalsIgnoreCase("quarterly"))   // optimise
                     where = where + "created_on >= to_char(to_date('" + dtrange.getStartDate() + "','YYYY-MM-DD' ),'YYYY-Q') and "
-                            + "created_on <= to_char(to_date('" + dtrange.getEndDate() + "','YYYY-MM-DD' ),'YYYY-Q')   OR";
+                            + "created_on <= to_char(to_date('" + dtrange.getEndDate() + "','YYYY-MM-DD' ),'YYYY-Q')   OR ";
                     //  where = where + " to_char(to_date(created_on,'YYYY-Q'),'YYYY-MM-DD') >= '" + dtrange.getStartDate() + "' and" + " to_char(to_date(created_on,'YYYY-Q'),'YYYY-MM-DD') <= '" + dtrange.getEndDate() + "' OR";
                 else if (Objects.nonNull(reportTrend) && reportTrend.equalsIgnoreCase("yearly"))
                     where = where + " to_char(to_date(created_on,'YYYY'),'YYYY-MM-DD') >= '" + dtrange.getStartDate() + "' and"
-                            + " to_char(to_date(created_on,'YYYY'),'YYYY-MM-DD') <= '" + dtrange.getEndDate() + "' OR";
+                            + " to_char(to_date(created_on,'YYYY'),'YYYY-MM-DD') <= '" + dtrange.getEndDate() + "' OR ";
                 else
                     // When created on is varchar ::
                     //   where = where + " to_char(to_date(created_on,'YYYY-MM-DD'),'YYYY-MM-DD') >= '" + dtrange.getStartDate() + "' and"
@@ -186,7 +185,7 @@ public class GraphQueryByColumnName implements GraphQueryInterface {
 
                     // When created on is timestamp ::
                     where = where + " to_char(created_on,'YYYY-MM-DD') >= '" + dtrange.getStartDate() + "' and"
-                            + " to_char(created_on,'YYYY-MM-DD') <= '" + dtrange.getEndDate() + "' OR";
+                            + " to_char(created_on,'YYYY-MM-DD') <= '" + dtrange.getEndDate() + "' OR ";
 
                 //  where = where + "created_on  BETWEEN to_date('" + dtrange.getStartDate() + "','YYYY-MM-DD') AND  to_date( '" + dtrange.getEndDate() + "','YYYY-MM-DD') OR ";
 //                    if (Objects.nonNull(reportTrend) && reportTrend.equalsIgnoreCase("monthly"))

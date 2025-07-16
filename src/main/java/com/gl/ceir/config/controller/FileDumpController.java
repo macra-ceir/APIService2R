@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gl.ceir.config.configuration.FileStorageProperties;
+//import com.gl.ceir.config.configuration.FileStorageProperties;
 import com.gl.ceir.config.model.app.FileDetails;
 import com.gl.ceir.config.model.app.FileDumpMgmt;
 import com.gl.ceir.config.model.app.FileDumpFilterRequest;
@@ -24,8 +24,8 @@ public class FileDumpController {
 	@Autowired
 	ListFileDetailsImpl  listFileDetailsImpl;
 
-	@Autowired
-	FileStorageProperties fileStorageProperties;
+//	@Autowired
+//	FileStorageProperties fileStorageProperties;
 
 	private static final Logger logger = LogManager.getLogger(FileDumpController.class);
 

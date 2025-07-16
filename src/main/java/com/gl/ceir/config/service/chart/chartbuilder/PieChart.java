@@ -50,7 +50,7 @@ public class PieChart implements GraphBuilderInterface {
                 .map(ReportColumnDb::getColumnName)
                 .map(p -> p.toLowerCase())
                 .findFirst().get();
-        try (Connection conn = graphDbTablesRepository.getConnection(); Statement stmt = conn.createStatement(); ResultSet resultSet = stmt.executeQuery(query);) {
+        try (Connection conn = graphDbTablesRepository.getConnections(); Statement stmt = conn.createStatement(); ResultSet resultSet = stmt.executeQuery(query);) {
             ResultSetMetaData metaData = resultSet.getMetaData();
             int columnCount = metaData.getColumnCount();// Create a map to store column names and their corresponding lists of values
 //            for (int i = 1; i <= columnCount; i++) {
@@ -59,26 +59,32 @@ public class PieChart implements GraphBuilderInterface {
 //                    legendValue = metaData.getColumnName(i);
 //                }
 //            }
-            logger.info("chartType" + chartType + ";;legend ->" + legend + ";;legendValue->" + legendValue);
+            logger.debug("chartType" + chartType + ";;legend ->" + legend + ";;legendValue->" + legendValue);
             int i = 0;
             while (resultSet.next()) {
                 var leg = resultSet.getString(legend);
                 var legValue = resultSet.getString(legendValue);
-                logger.info(i++ + "!!!!" + leg + ":::" + legValue);
+                logger.debug(i++ + "!!!!" + leg + ":::" + legValue);
                 sData.add(new SeriesData(leg, chartType, List.of(legValue)));
             }
+
+            var headerString = "";
+            if (Objects.nonNull(filterRequest.getSearchString()))
+                headerString = filterRequest.getSearchString().toUpperCase()
+                        .replace("'", "");
+
             HighChartsObj highChartsObj = new HighChartsObj();
-            highChartsObj.setTitle(title);
+            highChartsObj.setTitle(title.replace("$title", headerString));
             highChartsObj.setSubtitle(subtitle);
             highChartsObj.setChartType(chartType);
-            highChartsObj.setyAxis("Imei Count");
+            highChartsObj.setyAxis("IMEI Count");
             highChartsObj.setSeriesData(sData);
             highChartsObj.setCatogery(category);
-            logger.info(sData + ":::::::::::::::" + category);
+            logger.debug(sData + ":::::::::::::::" + category);
             return highChartsObj;
         } catch (Exception e) {
             logger.error(e + "in [" + Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(PieChart.class.getName())).collect(Collectors.toList()).get(0) + "]");
-            logger.info("Exception [" + e + "]");
+            logger.error("Exception [" + e + "]");
             return null;
         }
     }
@@ -86,7 +92,7 @@ public class PieChart implements GraphBuilderInterface {
     // *************************** //
     public JSONObject getDataByQuery(String query) {
         logger.info("Final data query: [" + query + "]");
-        try (Connection conn = graphDbTablesRepository.getConnection(); Statement stmt = conn.createStatement();
+        try (Connection conn = graphDbTablesRepository.getConnections(); Statement stmt = conn.createStatement();
              ResultSet resultSet = stmt.executeQuery(query)) {
             while (resultSet.next()) {
               var value =  resultSet.getString("tagCounts");

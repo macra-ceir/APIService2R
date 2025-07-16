@@ -5,6 +5,7 @@ import com.gl.ceir.config.model.app.ReportColumnDb;
 import com.gl.ceir.config.model.app.SeriesData;
 import com.gl.ceir.config.model.app.TableFilterRequest;
 import com.gl.ceir.config.repository.app.GraphDbTablesRepository;
+import com.gl.ceir.config.request.model.ResponseDetailsForTop;
 import com.gl.ceir.config.service.chart.chartInterface.GraphBuilderInterface;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,7 +36,7 @@ public class DualAxisChart implements GraphBuilderInterface {
         List<SeriesData> sData = new LinkedList<>();
         String dualChartType = "", dualHeaderName = "", dualColumnName = "";
         String legendValueColumnName = "", legendValueChartType = "";
-        String categoryColumn = "", columnlist = "", type = "", headerName = "", xaxisChartType = "", yaxisColumnName = "", yaxisChartType = "";
+        String categoryColumn = "", type = "", headerName = "", xaxisChartType = "", yaxisColumnName = "";
         for (ReportColumnDb coulums : columnDetails) {
             if (coulums.getChartParam().trim().equalsIgnoreCase("xaxis")) {
                 categoryColumn = coulums.getColumnName();
@@ -56,14 +57,15 @@ public class DualAxisChart implements GraphBuilderInterface {
                 dualChartType = coulums.getChartType();
             }
         }
-        logger.info("xaxis::categoryColumn=" + categoryColumn + "; xaxisChartType=" + xaxisChartType);
-        logger.info("yaxis::yaxisColumnName=" + yaxisColumnName + "; (yaxisChartType)type=" + type);
-        logger.info("LegendValue::legendValueColumnName=" + legendValueColumnName + "; legendValueChartType=" + legendValueChartType + "; headerName=" + headerName);
-        logger.info("LegendValue2::dualColumnName=" + dualColumnName + "; ()dualHeaderName=" + dualHeaderName + "; dualChartType=" + dualChartType);
+        logger.debug("xaxis::categoryColumn=" + categoryColumn + "; xaxisChartType=" + xaxisChartType);
+        logger.debug("yaxis::yaxisColumnName=" + yaxisColumnName + "; (yaxisChartType)type=" + type);
+        logger.debug("LegendValue::legendValueColumnName=" + legendValueColumnName + "; legendValueChartType=" + legendValueChartType + "; headerName=" + headerName);
+        logger.debug("LegendValue2::dualColumnName=" + dualColumnName + "; ()dualHeaderName=" + dualHeaderName + "; dualChartType=" + dualChartType);
 
-        try (Connection conn = graphDbTablesRepository.getConnection(); Statement stmt = conn.createStatement(); ResultSet resultSet = stmt.executeQuery(query);) {
+        try (Connection conn = graphDbTablesRepository.getConnections(); Statement stmt = conn.createStatement(); ResultSet resultSet = stmt.executeQuery(query);) {
             ResultSetMetaData metaData = resultSet.getMetaData();
             int columnCount = metaData.getColumnCount();// Create a map to store column names and their corresponding lists of values
+            Map<String, String> seriesData = new HashMap<>();
             Map<String, List<String>> dataMap = new HashMap<>();
             List<ResponseDetailsForTop> responseDetailsForTop = new ArrayList<>();
             LinkedHashSet<String> dateSet = new LinkedHashSet();
@@ -71,8 +73,9 @@ public class DualAxisChart implements GraphBuilderInterface {
             List<String> dualChartList = new ArrayList<>();
             while (resultSet.next()) {
                 logger.info("::::" + resultSet.getString(1) + "::" + resultSet.getString(2) + "::" + resultSet.getString(3) + "::");
-                dateSet.add(resultSet.getString(1));   // createdOn
-                typeXset.add(resultSet.getString(2));  // legend   // resultSet.getString(3); - legendValues
+                dateSet.add(resultSet.getString(1));
+                typeXset.add(resultSet.getString(2));
+                seriesData.put("legend", resultSet.getString(3));  // legend   // resultSet.getString(3); - legendValues
                 dualChartList.add(resultSet.getString(dualColumnName));
                 responseDetailsForTop.add(new ResponseDetailsForTop(resultSet.getString(1), resultSet.getString(2), resultSet.getString(3)));
             }
@@ -95,25 +98,26 @@ public class DualAxisChart implements GraphBuilderInterface {
                 sData.add(new SeriesData(columnName, type, columnValues));
             }
             sData.add(new SeriesData(dualColumnName, dualChartType, dualChartList));
-            List<String> category = new LinkedList<>(dateSet);
             HighChartsObj highChartsObj = new HighChartsObj();
             var headerString = "";
-            if (Objects.nonNull(filterRequest.getSearchString())){
+            if (Objects.nonNull(filterRequest.getSearchString())) {
                 for (String values : filterRequest.getSearchString().toUpperCase().split("AND ")) {
                     if (values.contains("MONTHS_BETWEEN")) {
                         headerString = headerString + " based on Second Hand Imei ";
                     } else {
-                        headerString = headerString +  " for " + values.toUpperCase().replace("'", "").replace("_", " ");
+                        headerString = headerString + " for " + values.toUpperCase().replace("'", "").replace("_", " ");
                     }
-                }headerString.replace("md", "").replace("mobile_device_repository", "")
+                }
+                headerString.replace("md", "").replace("mobile_device_repository", "")
                         .replace("MOBILE_DEVICE_REPOSITORY", "");
             }
-            highChartsObj.setTitle(title.replace("$title", headerString));
+
+            highChartsObj.setTitle(title.replace("$title", headerString.isEmpty() ? "" : headerString));
             highChartsObj.setSubtitle(subtitle);
             highChartsObj.setyAxis(headerName + "," + dualHeaderName); //
             highChartsObj.setSeriesData(sData);
-            highChartsObj.setCatogery(category);
-            logger.info(sData + ":::::::::::::::" + category);
+            highChartsObj.setCatogery(new LinkedList<>(dateSet));
+            logger.debug(sData + ":::::::::::::::" + new LinkedList<>(dateSet));
             return highChartsObj;
         } catch (Exception e) {
             logger.error("[{(ERROR)}]" + e + "in [" + Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(DualAxisChart.class.getName())).collect(Collectors.toList()).get(0) + "]");
@@ -122,16 +126,13 @@ public class DualAxisChart implements GraphBuilderInterface {
     }
 
     private static String findCountValue(List<ResponseDetailsForTop> list, String date, String type) {
-        for (ResponseDetailsForTop obj : list) {
-            if (obj.getDateValue().equals(date) && obj.getTypeValue().equals(type)) {
-                return obj.getCountValue();
-            }
-        }
-        return "0"; // Indicates that no matching object was found
+        return list.stream().
+                filter(obj -> obj.getDateValue().equals(date) && obj.getTypeValue().equals(type))
+                .map(obj -> obj.getCountValue())
+                .findFirst().orElse("0");
     }
+
 }
-
-
 //    @Override
 //    public HighChartsObj createGraph(String query, List<ReportColumnDb> columnDetails) {
 //        logger.info("Final data query: [" + query + "]");

@@ -5,15 +5,15 @@ import com.gl.ceir.config.model.app.DBTableNames;
 import com.gl.ceir.config.model.app.HighChartsObj;
 import com.gl.ceir.config.model.app.ReportColumnDb;
 import com.gl.ceir.config.model.app.SeriesData;
-import com.zaxxer.hikari.HikariDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.jpa.EntityManagerFactoryInfo;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -40,9 +40,11 @@ public class GraphDbTablesRepository {
     @Autowired
     SystemConfigurationDbRepository systemConfigurationDb;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
 
     //NOT TO TOUCH
-
 
 
     public HighChartsObj simpleGraphBuilder(String query, List<ReportColumnDb> columnDetails) {  // NOT TO TOUCH
@@ -68,7 +70,7 @@ public class GraphDbTablesRepository {
                 .collect(Collectors.toList());
         logger.info("columnlist::" + columnlist + ":::SIZE:" + columnlist.size());
 
-        try (Statement stmt = this.getConnection().createStatement(); ResultSet resultSet = stmt.executeQuery(query);) {
+        try (Connection conn = getConnections(); Statement stmt = conn.createStatement(); ResultSet resultSet = stmt.executeQuery(query);) {
             ResultSetMetaData metaData = resultSet.getMetaData();
             int columnCount = metaData.getColumnCount();// Create a map to store column names and their corresponding lists of values
             Map<String, List<String>> dataMap = new HashMap<>();//        while (res.next()) {/     category.add(res.getString(String.valueOf(categoryColumn)));
@@ -246,7 +248,7 @@ public class GraphDbTablesRepository {
         Connection conn = null;
         ResultSet res = null;
         try {
-            conn = this.getConnection();
+            conn = this.getConnections();
 //            metadata = sessionImp.connection().getMetaData();
             metadata = conn.getMetaData();
             res = metadata.getTables(null, null, "%", new String[]{"BASE TABLE"});
@@ -293,7 +295,7 @@ public class GraphDbTablesRepository {
         ResultSet res = null;
         Connection conn = null;
         try {
-            conn = this.getConnection();
+            conn = getConnections();
             stmt = conn.createStatement();
             logger.info("Total row query:[" + query + "]");
             res = stmt.executeQuery(query);
@@ -326,7 +328,7 @@ public class GraphDbTablesRepository {
         try {
             query = "select count(*) from ( " + query + " ) countQuery";
             logger.info("Total row query:[" + query + "]");
-            conn = this.getConnection();
+            conn = getConnections();
             stmt = conn.createStatement();
             res = stmt.executeQuery(query);
             while (res.next()) {
@@ -340,6 +342,8 @@ public class GraphDbTablesRepository {
                     res.close();
                 if (stmt != null)
                     stmt.close();
+                if (conn != null)
+                    conn.close();
 //				if( sessionImp != null )
 //					sessionImp.close();
             } catch (SQLException e) {
@@ -350,20 +354,37 @@ public class GraphDbTablesRepository {
     }
 
 
-    public Connection getConnection() {
-        EntityManagerFactoryInfo info = (EntityManagerFactoryInfo) em.getEntityManagerFactory();
+//    public Connection getConnection() {
+//        EntityManagerFactoryInfo info = (EntityManagerFactoryInfo) em.getEntityManagerFactory();
+//        try {
+//            var ds =  info.getDataSource();
+//            if (ds instanceof HikariDataSource) {
+//                HikariDataSource hds = (HikariDataSource) ds;
+//                logger.info("HikariCP PoolSize {} ,ConnTimiOut {} ,Max Lifetime{} " , hds.getMaximumPoolSize(), hds.getConnectionTimeout(),hds.getMaxLifetime());
+//            }
+//            return info.getDataSource().getConnection();
+//        } catch (Exception e) {
+//            logger.error(e.getMessage(), e);
+//            return null;
+//        }
+//    }
+
+
+    public Connection getConnections() {
         try {
-            var ds =  info.getDataSource();
-            if (ds instanceof HikariDataSource) {
-                HikariDataSource hds = (HikariDataSource) ds;
-                logger.info("HikariCP PoolSize {} ,ConnTimiOut {} ,Max Lifetime{} " , hds.getMaximumPoolSize(), hds.getConnectionTimeout(),hds.getMaxLifetime());
+            DataSource dataSource = jdbcTemplate.getDataSource();
+            if (dataSource != null) {
+                return dataSource.getConnection(); //  Don't forget to close it
+            } else {
+                throw new IllegalStateException("No DataSource found in JdbcTemplate");
             }
-            return info.getDataSource().getConnection();
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+        } catch (SQLException e) {
+            logger.error("Error while getting connection from JdbcTemplate: {}", e.getMessage(), e);
             return null;
         }
     }
+
+
 }
 
 

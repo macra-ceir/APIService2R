@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.gl.ceir.config.configuration.FileStorageProperties;
+//import com.gl.ceir.config.configuration.FileStorageProperties;
 import com.gl.ceir.config.configuration.PropertiesReader;
 import com.gl.ceir.config.exceptions.ResourceServicesException;
 import com.gl.ceir.config.model.app.EndUserDB;
@@ -25,8 +25,8 @@ public class EnduserServiceImpl {
 	@Autowired
 	PropertiesReader propertiesReader;
 
-	@Autowired
-	FileStorageProperties fileStorageProperties;
+//	@Autowired
+//	FileStorageProperties fileStorageProperties;
 
 	public GenricResponse endUserByNid(String nid) {
 		try {

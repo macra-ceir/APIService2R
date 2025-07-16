@@ -1,4 +1,4 @@
-package com.gl.ceir.config.model.aud;
+package com.gl.ceir.config.model.app;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
-@Table(name = "audit_trail")
+@Table(name = "audit_trail",catalog = "aud",schema = "aud")
 public class AuditTrail implements Serializable {
 
 	private static final long serialVersionUID = 1L;

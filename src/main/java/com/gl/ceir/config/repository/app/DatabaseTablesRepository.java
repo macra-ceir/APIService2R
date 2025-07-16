@@ -7,7 +7,6 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.orm.jpa.EntityManagerFactoryInfo;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -40,6 +39,10 @@ public class DatabaseTablesRepository {
     @Autowired
     SystemConfigurationDbRepository systemConfigurationDb;
 
+
+    @Autowired
+    GraphDbTablesRepository graphDbTablesRepository;
+
     public DBTableNames getTables(String dbName) {
 //        SessionImplementor sessionImp = (org.hibernate.engine.spi.SessionImplementor) em.getDelegate();
         DatabaseMetaData metadata = null;
@@ -47,7 +50,7 @@ public class DatabaseTablesRepository {
         Connection conn = null;
         ResultSet res = null;
         try {
-            conn = this.getConnection();
+            conn = graphDbTablesRepository.getConnections();
 //            metadata = sessionImp.connection().getMetaData();
             metadata = conn.getMetaData();
             res = metadata.getTables(null, null, "%", new String[]{"BASE TABLE"});
@@ -178,10 +181,9 @@ public class DatabaseTablesRepository {
         TableColumnDetails tableColumnDetails = null;
         List<String> tempColumns = new ArrayList<String>();
         DatabaseMetaData metadata = null;
-        Connection conn = null;
         ResultSet res = null;
-        try {
-            conn = this.getConnection();
+        try (Connection conn = graphDbTablesRepository.getConnections()) {
+            ;
             metadata = conn.getMetaData();
             res = metadata.getColumns(null, null, tableName, null);
             while (res.next()) {
@@ -199,8 +201,6 @@ public class DatabaseTablesRepository {
                 try {
                     if (res != null)
                         res.close();
-                    if (conn != null)
-                        conn.close();
                 } catch (SQLException e) {
                     logger.error(e.getMessage(), e);
                 }
@@ -309,7 +309,7 @@ public class DatabaseTablesRepository {
                 query = "select * from( " + query + " order by created_on desc) where rownum > " + (pageNumber * pageSize) + " and rownum <= " + ((pageNumber + 1) * pageSize);
             }
             logger.info("Final query:[" + query + "]");
-            conn = this.getConnection();
+            conn =  graphDbTablesRepository.getConnections() ;
             stmt = conn.createStatement();
             res = stmt.executeQuery(query);
             tableData = new TableData();
@@ -409,7 +409,7 @@ public class DatabaseTablesRepository {
             }
             query = query + " order by modified_on desc";
             logger.info("Final data query: [" + query + "]");
-            conn = this.getConnection();
+            conn = graphDbTablesRepository.getConnections();
             stmt = conn.createStatement();
             res = stmt.executeQuery(query);
             tableData = new TableData();
@@ -582,7 +582,7 @@ public class DatabaseTablesRepository {
                     }
                 }
                 logger.info("Final data query: [" + query + "]");
-                conn = this.getConnection();
+                conn = graphDbTablesRepository.getConnections();
                 stmt = conn.createStatement();
                 res = stmt.executeQuery(query);
                 resultColumns = new ArrayList<String>();
@@ -767,7 +767,7 @@ public class DatabaseTablesRepository {
                             + ") orderd2 where rnum	> " + (pageNumber * pageSize) + " and rnum <=" + ((pageNumber + 1) * pageSize);
                 }
                 logger.info("Final data query: [" + query + "]");
-                conn = this.getConnection();
+                conn = graphDbTablesRepository.getConnections();
                 stmt = conn.createStatement();
                 res = stmt.executeQuery(query);
                 resultData = new ArrayList<Map<String, String>>();
@@ -993,7 +993,7 @@ public class DatabaseTablesRepository {
                             + ") orderd2 where rnum	> " + (pageNumber * pageSize) + " and rnum <=" + ((pageNumber + 1) * pageSize);
                 }
                 logger.info("Final data query: [" + query + "]");
-                conn = this.getConnection();
+                conn = graphDbTablesRepository.getConnections();
                 stmt = conn.createStatement();
                 res = stmt.executeQuery(query);
                 resultData = new ArrayList<Map<String, String>>();
@@ -1257,7 +1257,7 @@ public class DatabaseTablesRepository {
                             + ") orderd2 where rnum	> " + (pageNumber * pageSize) + " and rnum <=" + ((pageNumber + 1) * pageSize * uniqueValues.size());
                 }
                 logger.info("Final data query: [" + query + "]");
-                conn = this.getConnection();
+                conn = graphDbTablesRepository.getConnections();
                 stmt = conn.createStatement();
                 res = stmt.executeQuery(query);
                 resultData = new ArrayList<Map<String, String>>();
@@ -1368,7 +1368,8 @@ public class DatabaseTablesRepository {
         try {
             query = "select distinct " + columnName + " as " + columnName + " from " + tableName + " countQuery";
             logger.info("Total row query:[" + query + "]");
-            stmt = this.getConnection().createStatement();
+            conn = graphDbTablesRepository.getConnections();
+            stmt = conn.createStatement();
             res = stmt.executeQuery(query);
             uniqueValues = new ArrayList<String>();
             while (res.next()) {
@@ -1399,7 +1400,7 @@ public class DatabaseTablesRepository {
         ResultSet res = null;
         Connection conn = null;
         try {
-            conn = this.getConnection();
+            conn = graphDbTablesRepository.getConnections();
             stmt = conn.createStatement();
             logger.info("Total row query:[" + query + "]");
             res = stmt.executeQuery(query);
@@ -1428,11 +1429,10 @@ public class DatabaseTablesRepository {
         long rows = 0l;
         Statement stmt = null;
         ResultSet res = null;
-        Connection conn = null;
-        try {
+        try (Connection conn = graphDbTablesRepository.getConnections();) {
             query = "select count(*) from ( " + query + " ) countQuery";
             logger.info("Total row query:[" + query + "]");
-            conn = this.getConnection();
+
             stmt = conn.createStatement();
             res = stmt.executeQuery(query);
             while (res.next()) {
@@ -1477,13 +1477,13 @@ public class DatabaseTablesRepository {
         }
     }
 
-    public Connection getConnection() {
-        EntityManagerFactoryInfo info = (EntityManagerFactoryInfo) em.getEntityManagerFactory();
-        try {
-            return info.getDataSource().getConnection();
-        } catch (SQLException e) {
-            logger.error(e.getMessage(), e);
-            return null;
-        }
-    }
+//    public Connection getConnection() {
+//        EntityManagerFactoryInfo info = (EntityManagerFactoryInfo) em.getEntityManagerFactory();
+//        try {
+//            return info.getDataSource().getConnection();
+//        } catch (SQLException e) {
+//            logger.error(e.getMessage(), e);
+//            return null;
+//        }
+//    }
 }

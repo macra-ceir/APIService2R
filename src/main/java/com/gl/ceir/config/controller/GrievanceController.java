@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gl.ceir.config.configuration.FileStorageProperties;
+//import com.gl.ceir.config.configuration.FileStorageProperties;
 import com.gl.ceir.config.model.app.RequestCountAndQuantity;
 import com.gl.ceir.config.model.app.EndUserGrievance;
 import com.gl.ceir.config.model.app.FileDetails;
@@ -37,8 +37,8 @@ public class GrievanceController {
 
 	@Autowired
 	GrievanceServiceImpl grievanceServiceImpl;
-	@Autowired
-	FileStorageProperties fileStorageProperties;
+//	@Autowired
+	 // FileStorageProperties fileStorageProperties;
 	@Autowired
 	Utility utility;
 	

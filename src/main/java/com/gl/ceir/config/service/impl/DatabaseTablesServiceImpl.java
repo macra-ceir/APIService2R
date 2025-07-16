@@ -27,14 +27,14 @@ import com.gl.ceir.config.model.app.TableData;
 import com.gl.ceir.config.model.app.TableDataPageable;
 import com.gl.ceir.config.model.app.TableFilterRequest;
 import com.gl.ceir.config.model.app.User;
-import com.gl.ceir.config.model.aud.AuditTrail;
+import com.gl.ceir.config.model.app.AuditTrail;
 import com.gl.ceir.config.repository.app.DatabaseTablesRepository;
 import com.gl.ceir.config.repository.app.ReportDbRepository;
 import com.gl.ceir.config.repository.app.StakeholderFeatureRepository;
 import com.gl.ceir.config.repository.app.SystemConfigListRepository;
 import com.gl.ceir.config.repository.app.SystemConfigurationDbRepository;
 import com.gl.ceir.config.repository.app.UserRepository;
-import com.gl.ceir.config.repository.aud.AuditTrailRepository;
+import com.gl.ceir.config.repository.app.AuditTrailRepository;
 import com.opencsv.CSVWriter;
 
 @Service

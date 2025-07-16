@@ -37,15 +37,15 @@ public class ColumnNameAsLegendChart implements GraphBuilderInterface {
                 .map(ReportColumnDb::getColumnName)
                 .map(String::toLowerCase)
                 .findFirst().get();
-        logger.info("categoryColumn" + categoryColumn);
+        logger.debug("categoryColumn" + categoryColumn);
         var columnlist = columnDetails.stream()
                 .filter(p -> p.getChartParam().equalsIgnoreCase("yaxis"))
                 .map(ReportColumnDb::getColumnName)
                 .map(p -> p.toLowerCase())
                 .collect(Collectors.toList());
-        logger.info("columnlist::" + columnlist + ":::SIZE:" + columnlist.size());
-        logger.info("Final data query: [" + query + "]");
-        try (Connection conn = graphDbTablesRepository.getConnection(); Statement stmt = conn.createStatement(); ResultSet resultSet = stmt.executeQuery(query);) {
+        logger.debug("columnlist::" + columnlist + ":::SIZE:" + columnlist.size());
+        logger.debug("Final data query: [" + query + "]");
+        try (Connection conn = graphDbTablesRepository.getConnections(); Statement stmt = conn.createStatement(); ResultSet resultSet = stmt.executeQuery(query);) {
             ResultSetMetaData metaData = resultSet.getMetaData();
             int columnCount = metaData.getColumnCount();// Create a map to store column names and their corresponding lists of values
             Map<String, List<String>> dataMap = new HashMap<>();//        while (res.next()) {/     category.add(res.getString(String.valueOf(categoryColumn)));
@@ -76,11 +76,11 @@ public class ColumnNameAsLegendChart implements GraphBuilderInterface {
             highChartsObj.setSubtitle(subtitle);
             highChartsObj.setSeriesData(sData);
             highChartsObj.setCatogery(category);
-            highChartsObj.setyAxis("Imei Count");  //   // count and percentage
-            logger.info(sData + "::::::::::::::::::::::::::::::" + category);
+            highChartsObj.setyAxis("IMEI Count");  //   // count and percentage
+            logger.debug(sData + "::::::::::::::::::::::::::::::" + category);
             return highChartsObj;
         } catch (Exception e) {
-            logger.info("Exception [" + e + "]");
+            logger.error("Exception [" + e + "]");
             logger.error("Exception [" + e + "]]in [" + Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(ColumnNameAsLegendChart.class.getName())).collect(Collectors.toList()).get(0) + "]");
             return null;
         }

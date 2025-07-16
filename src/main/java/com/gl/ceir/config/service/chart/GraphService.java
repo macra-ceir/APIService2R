@@ -66,7 +66,7 @@ public class GraphService {
 
     @Autowired
     SystemConfigurationDbRepository sysCon;
-
+/******/
     public HighChartsObj getReportData(TableFilterRequest filterRequest) {
         try {
             var columnDetails = reportColumnDbRepository.findByReportnameIdOrderByColumnOrderAsc(filterRequest.getReportnameId());
@@ -83,11 +83,11 @@ public class GraphService {
         if (Objects.nonNull(columnDetails.get(0).getReport().getReportDataQuery())) {  // simple query, usually for till date
             return graphQueryByReportDataQuery.graphQueryBuilder(filterRequest, columnDetails);
         } else if (!(Objects.nonNull(columnDetails.get(0).getReport().getChartQuery()))   // optimise
-                || columnDetails.get(0).getReport().getChartQuery().equalsIgnoreCase("")) {     // Query not present , create query
-            return graphQueryByColumnName.graphQueryBuilder(filterRequest, columnDetails);                  //  query = graphServiceImpl.createSelectQueryBuilder(filterRequest, pageNumber, pageSize, columnDetails);
+                || columnDetails.get(0).getReport().getChartQuery().equalsIgnoreCase("")) {
+            return graphQueryByColumnName.graphQueryBuilder(filterRequest, columnDetails);
         } else {
-            return graphQueryByChartQuery.graphQueryBuilder(filterRequest, columnDetails);                  // query = graphServiceImpl.createQueryByChartQuery(filterRequest, pageNumber, pageSize, columnDetails);
-        }     // dualAxis Query
+            return graphQueryByChartQuery.graphQueryBuilder(filterRequest, columnDetails);
+        }
     }
 
     private HighChartsObj charts(TableFilterRequest filterRequest, List<ReportColumnDb> columnDetails, String query) {
@@ -120,7 +120,7 @@ public class GraphService {
             String reqId = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
             var filepath = pdffilepath + "/" + reqId + "/";
             Files.createDirectories(Paths.get(filepath + "pdf/"));
-            logger.info("DIRECTORY CRAETED " + filepath);
+            logger.debug("DIRECTORY CRAETED " + filepath);
 
             int[] a = {180, 181, 182, 183};
             for (int reportnameId : a) {
@@ -134,7 +134,7 @@ public class GraphService {
                 Thread.sleep(1000);
                 executeHighChartExport(filepath, reqId, reportnameId);
             }
-            logger.info("EXPORT DONE  ");
+            logger.debug("EXPORT DONE  ");
             var fullFileName = mergePdf(filepath, reqId, a);
             logger.info("MERGE PDF DONE" + fullFileName);
             if (fullFileName == null)

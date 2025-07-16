@@ -19,12 +19,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.gl.ceir.config.EmailSender.EmailUtil;
 import com.gl.ceir.config.EmailSender.MailSubjects;
-import com.gl.ceir.config.configuration.FileStorageProperties;
+//import com.gl.ceir.config.configuration.FileStorageProperties;
 import com.gl.ceir.config.configuration.PropertiesReader;
 import com.gl.ceir.config.exceptions.ResourceServicesException;
 import com.gl.ceir.config.feign.UserFeignClient;
@@ -47,7 +46,7 @@ import com.gl.ceir.config.model.app.SystemConfigListDb;
 import com.gl.ceir.config.model.app.User;
 import com.gl.ceir.config.model.app.UserProfile;
 import com.gl.ceir.config.model.app.Usertype;
-import com.gl.ceir.config.model.aud.AuditTrail;
+import com.gl.ceir.config.model.app.AuditTrail;
 import com.gl.ceir.config.model.constants.Datatype;
 import com.gl.ceir.config.model.constants.Features;
 import com.gl.ceir.config.model.constants.GrievanceOrderColumnMapping;
@@ -66,12 +65,11 @@ import com.gl.ceir.config.repository.app.UserProfileRepository;
 import com.gl.ceir.config.repository.app.UserRepository;
 import com.gl.ceir.config.repository.app.UsertypeRepo;
 import com.gl.ceir.config.repository.app.WebActionDbRepository;
-import com.gl.ceir.config.repository.aud.AuditTrailRepository;
+import com.gl.ceir.config.repository.app.AuditTrailRepository;
 import com.gl.ceir.config.request.model.Generic_Response_Notification;
 import com.gl.ceir.config.request.model.RegisterationUser;
 import com.gl.ceir.config.specificationsbuilder.GenericSpecificationBuilder;
 import com.gl.ceir.config.specificationsbuilder.GrievanceHistorySpecificationBuilder;
-import com.gl.ceir.config.specificationsbuilder.GrievanceSpecificationBuilder;
 import com.gl.ceir.config.util.CustomMappingStrategy;
 
 import com.opencsv.CSVWriter;
@@ -96,8 +94,7 @@ public class GrievanceServiceImpl{
 	WebActionDbRepository webActionDbRepository;
 	@Autowired
 	PropertiesReader propertiesReader;
-	@Autowired
-	FileStorageProperties fileStorageProperties;
+//	FileStorageProperties fileStorageProperties;
 	@Autowired
 	ConfigurationManagementServiceImpl configurationManagementServiceImpl;
 	@Autowired	

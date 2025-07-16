@@ -1,10 +1,9 @@
 package com.gl.ceir.config.service.chart.dbquerybuilder;
 
-import com.gl.ceir.config.configuration.PropertiesReader;
 import com.gl.ceir.config.model.app.*;
 import com.gl.ceir.config.repository.app.*;
-import com.gl.ceir.config.repository.aud.AuditTrailRepository;
 import com.gl.ceir.config.service.chart.chartInterface.GraphQueryInterface;
+import com.gl.ceir.config.service.chart.chartbuilder.TopXChart;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,22 +24,11 @@ public class GraphQueryByChartQuery implements GraphQueryInterface {
     ReportDbRepository reportDbRepository;
     @Autowired
     SystemConfigListRepository systemConfigListRepository;
+
+
     @Autowired
-    GraphDbTablesRepository graphDbTablesRepository;
-    @Autowired
-    ReportColumnDbRepository reportColumnDbRepository;
-    @Autowired
-    SystemConfigurationDbRepository systemConfigurationDbRepository;
-    @Autowired
-    PropertiesReader propertiesReader;
-    @Autowired
-    ReportFreqDbRepository reportFreqDbRepository;
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    AuditTrailRepository auditTrailRepository;
-    @Autowired
-    StakeholderFeatureRepository stakeholderFeatureRepository;
+    TopXChart topXChart;
+
 
     @Override
     public String graphQueryBuilder(TableFilterRequest filterRequest, List<ReportColumnDb> columnDetails) {
@@ -64,14 +52,9 @@ public class GraphQueryByChartQuery implements GraphQueryInterface {
                 filterRequest.setTypeFlag(0);
             }
 
-            try {
-                logger.info("TYpe FLag" + systemConfigListRepository.findByTagAndValue("Type_Flag", filterRequest.getTypeFlag()));
-            } catch (Exception e) {
-                logger.info("TESTING Type Flag");
-            }
 
             reportTrend = typeFlags.stream().filter(typeFlagDetails -> typeFlagDetails.getValue().equals(filterRequest.getTypeFlag())).findFirst().get().getInterpretation();
-            logger.info("TYpe FLag Trend" + reportTrend);
+            logger.debug("TYpe FLag Trend" + reportTrend);
 
             {   //where Block
                 where = whereStringWithDateRange(filterRequest, where, reportTrend);

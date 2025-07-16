@@ -6,7 +6,7 @@ import com.gl.ceir.config.model.app.ReportDb;
 import com.gl.ceir.config.model.app.SystemConfigListDb;
 import com.gl.ceir.config.model.app.TableFilterRequest;
 import com.gl.ceir.config.repository.app.*;
-import com.gl.ceir.config.repository.aud.AuditTrailRepository;
+import com.gl.ceir.config.repository.app.AuditTrailRepository;
 import com.gl.ceir.config.service.chart.chartInterface.GraphQueryInterface;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -109,4 +109,3 @@ public class GraphQueryByReportDataQuery implements GraphQueryInterface {
     }
 
 }
-//   SELECT reason_for_invalid_imei ,count FROM (SELECT reason_for_invalid_imei , sum(count) as count,RANK() OVER (ORDER BY sum(count)  DESC) AS rank FROM  rep.invalid_reason_imei_count   GROUP BY reason_for_invalid_imei )  where rank <=5

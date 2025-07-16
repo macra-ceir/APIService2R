@@ -6,7 +6,7 @@
 //import com.gl.ceir.config.model.app.SystemConfigListDb;
 //import com.gl.ceir.config.model.app.TableFilterRequest;
 //import com.gl.ceir.config.repository.app.*;
-//import com.gl.ceir.config.repository.aud.AuditTrailRepository;
+//import com.gl.ceir.config.repository.app.AuditTrailRepository;
 //import org.apache.logging.log4j.LogManager;
 //import org.apache.logging.log4j.Logger;
 //import org.springframework.beans.factory.annotation.Autowired;

@@ -23,7 +23,7 @@ import com.gl.ceir.config.model.app.Notification;
 import com.gl.ceir.config.model.app.SearchCriteria;
 import com.gl.ceir.config.model.app.SystemConfigListDb;
 import com.gl.ceir.config.model.app.SystemConfigurationDb;
-import com.gl.ceir.config.model.aud.AuditTrail;
+import com.gl.ceir.config.model.app.AuditTrail;
 import com.gl.ceir.config.model.constants.Datatype;
 import com.gl.ceir.config.model.constants.SearchOperation;
 import com.gl.ceir.config.model.constants.Tags;
@@ -31,7 +31,7 @@ import com.gl.ceir.config.repository.app.MessageConfigurationDbRepository;
 import com.gl.ceir.config.repository.app.NotificationRepository;
 import com.gl.ceir.config.repository.app.SystemConfigListRepository;
 import com.gl.ceir.config.repository.app.SystemConfigurationDbRepository;
-import com.gl.ceir.config.repository.aud.AuditTrailRepository;
+import com.gl.ceir.config.repository.app.AuditTrailRepository;
 import com.gl.ceir.config.specificationsbuilder.GenericSpecificationBuilder;
 import com.gl.ceir.config.util.InterpSetter;
 

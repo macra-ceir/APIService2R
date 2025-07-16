@@ -4,12 +4,10 @@ import java.io.Writer;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,7 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -32,15 +29,13 @@ import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.gl.ceir.config.EmailSender.EmailUtil;
 import com.gl.ceir.config.EmailSender.MailSubjects;
-import com.gl.ceir.config.configuration.FileStorageProperties;
+// import com.gl.ceir.config.configuration.FileStorageProperties;
 import com.gl.ceir.config.configuration.PropertiesReader;
 import com.gl.ceir.config.exceptions.ResourceServicesException;
 import com.gl.ceir.config.feign.UserFeignClient;
-import com.gl.ceir.config.model.app.AttachedFileInfo;
 import com.gl.ceir.config.model.app.DashboardUsersFeatureStateMap;
 import com.gl.ceir.config.model.app.FileDetails;
 import com.gl.ceir.config.model.app.GenricResponse;
-import com.gl.ceir.config.model.app.GrievanceFilterRequest;
 import com.gl.ceir.config.model.app.SearchCriteria;
 import com.gl.ceir.config.model.app.StatesInterpretationDb;
 import com.gl.ceir.config.model.app.SystemConfigListDb;
@@ -54,12 +49,10 @@ import com.gl.ceir.config.model.app.UserProfile;
 import com.gl.ceir.config.model.app.WebActionDb;
 import com.gl.ceir.config.model.app.brandRepoModel;
 import com.gl.ceir.config.model.app.modelRepoPojo;
-import com.gl.ceir.config.model.aud.AuditTrail;
+import com.gl.ceir.config.model.app.AuditTrail;
 import com.gl.ceir.config.model.constants.Datatype;
 import com.gl.ceir.config.model.constants.Features;
-import com.gl.ceir.config.model.constants.GrievanceOrderColumnMapping;
 import com.gl.ceir.config.model.constants.SearchOperation;
-import com.gl.ceir.config.model.constants.SubFeatures;
 import com.gl.ceir.config.model.constants.Tags;
 import com.gl.ceir.config.model.constants.TypeApproveDBOrderColumnMapping;
 import com.gl.ceir.config.model.constants.WebActionDbFeature;
@@ -76,7 +69,7 @@ import com.gl.ceir.config.repository.app.UserProfileRepository;
 import com.gl.ceir.config.repository.app.UserRepository;
 import com.gl.ceir.config.repository.app.WebActionDbRepository;
 import com.gl.ceir.config.repository.app.brandRepository;
-import com.gl.ceir.config.repository.aud.AuditTrailRepository;
+import com.gl.ceir.config.repository.app.AuditTrailRepository;
 import com.gl.ceir.config.request.model.Generic_Response_Notification;
 import com.gl.ceir.config.request.model.RegisterationUser;
 import com.gl.ceir.config.specificationsbuilder.GenericSpecificationBuilder;
@@ -90,8 +83,8 @@ public class TypeApproveServiceImpl {
 
 	private static final Logger log = LogManager.getLogger(TypeApproveServiceImpl.class);
 	
-	@Autowired
-	FileStorageProperties fileStorageProperties;
+	//@Autowired
+	//FileStorageProperties fileStorageProperties;
 	@Autowired
 	TypeApproveRepository typeApproveRepo;	
 	@Autowired

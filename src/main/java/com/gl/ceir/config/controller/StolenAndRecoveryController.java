@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gl.ceir.config.configuration.FileStorageProperties;
+// import com.gl.ceir.config.configuration.FileStorageProperties;
 import com.gl.ceir.config.model.app.GenricResponse;
 import com.gl.ceir.config.model.app.SingleImeiDetails;
 import com.gl.ceir.config.service.impl.StolenAndRecoveryServiceImpl;
@@ -25,9 +25,9 @@ public class StolenAndRecoveryController {
 
 	@Autowired
 	StolenAndRecoveryServiceImpl stolenAndRecoveryServiceImpl;
-
-	@Autowired
-	FileStorageProperties fileStorageProperties;
+//
+//	@Autowired
+//	FileStorageProperties fileStorageProperties;
 
 	@Autowired
 	Utility utility;

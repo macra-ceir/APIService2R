@@ -9,7 +9,6 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
 
@@ -70,7 +69,7 @@ public class ReportController {
             return new MappingJacksonValue(reportServiceImpl.downloadReportData(filterRequest, pageNumber, pageSize));
     }
 
-
+/* Use this */
     @ApiOperation(value = "Get report data.")
     @RequestMapping(path = "/graph/data", method = {RequestMethod.POST})
     public MappingJacksonValue getGraphData(@RequestBody TableFilterRequest filterRequest,
@@ -79,6 +78,8 @@ public class ReportController {
                                             @RequestParam(value = "file", defaultValue = "0", required = false) int file) {
         logger.info("Chart request:[" + filterRequest.toString() + "]");
         //if( file == 0 )
+
+
         var response = graphService.getReportData(filterRequest);
         logger.info("Chart Response:[" + response + "]");
         return new MappingJacksonValue(response);

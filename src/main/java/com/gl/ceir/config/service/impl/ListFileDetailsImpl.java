@@ -19,17 +19,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.gl.ceir.config.configuration.FileStorageProperties;
+// import com.gl.ceir.config.configuration.FileStorageProperties;
 import com.gl.ceir.config.configuration.PropertiesReader;
 import com.gl.ceir.config.exceptions.ResourceServicesException;
 import com.gl.ceir.config.model.app.FileDetails;
 import com.gl.ceir.config.model.app.FileDumpMgmt;
 import com.gl.ceir.config.model.app.FileListFileModel;
-import com.gl.ceir.config.model.app.Grievance;
 import com.gl.ceir.config.model.app.FileDumpFilterRequest;
 import com.gl.ceir.config.model.app.SearchCriteria;
 import com.gl.ceir.config.model.app.User;
-import com.gl.ceir.config.model.aud.AuditTrail;
+import com.gl.ceir.config.model.app.AuditTrail;
 import com.gl.ceir.config.model.constants.Datatype;
 import com.gl.ceir.config.model.constants.FileDumpOrderColumnMapping;
 import com.gl.ceir.config.model.constants.FileDumpType;
@@ -39,8 +38,7 @@ import com.gl.ceir.config.repository.app.FileDumpMgmtRepository;
 import com.gl.ceir.config.repository.app.StakeholderFeatureRepository;
 import com.gl.ceir.config.repository.app.SystemConfigurationDbRepository;
 import com.gl.ceir.config.repository.app.UserRepository;
-import com.gl.ceir.config.repository.aud.AuditTrailRepository;
-import com.gl.ceir.config.specificationsbuilder.FileDumpSpecificationBuilder;
+import com.gl.ceir.config.repository.app.AuditTrailRepository;
 import com.gl.ceir.config.specificationsbuilder.GenericSpecificationBuilder;
 import com.gl.ceir.config.util.CustomMappingStrategy;
 import com.opencsv.CSVWriter;
@@ -57,8 +55,8 @@ public class ListFileDetailsImpl {
 	FileDumpMgmtRepository fileDumpMgmtRepository;
 	@Autowired
 	PropertiesReader propertiesReader;
-	@Autowired
-	FileStorageProperties fileStorageProperties;
+	//@Autowired
+	//FileStorageProperties fileStorageProperties;
 	@Autowired
 	SystemConfigurationDbRepository systemConfigurationDbRepository;
 	@Autowired

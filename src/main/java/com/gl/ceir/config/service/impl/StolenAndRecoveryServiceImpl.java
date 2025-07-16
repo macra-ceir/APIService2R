@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.gl.ceir.config.configuration.FileStorageProperties;
+// import com.gl.ceir.config.configuration.FileStorageProperties;
 import com.gl.ceir.config.configuration.PropertiesReader;
 import com.gl.ceir.config.exceptions.ResourceServicesException;
 import com.gl.ceir.config.model.app.GenricResponse;
@@ -21,7 +21,7 @@ import com.gl.ceir.config.model.app.SystemConfigListDb;
 import com.gl.ceir.config.model.app.SystemConfigurationDb;
 import com.gl.ceir.config.model.app.User;
 import com.gl.ceir.config.model.app.WebActionDb;
-import com.gl.ceir.config.model.aud.AuditTrail;
+import com.gl.ceir.config.model.app.AuditTrail;
 import com.gl.ceir.config.model.constants.Tags;
 import com.gl.ceir.config.repository.app.ConsignmentRepository;
 import com.gl.ceir.config.repository.app.ImmegreationImeiDetailsRepository;
@@ -29,7 +29,7 @@ import com.gl.ceir.config.repository.app.StockManagementRepository;
 import com.gl.ceir.config.repository.app.StolenAndRecoveryRepository;
 import com.gl.ceir.config.repository.app.UserRepository;
 import com.gl.ceir.config.repository.app.WebActionDbRepository;
-import com.gl.ceir.config.repository.aud.AuditTrailRepository;
+import com.gl.ceir.config.repository.app.AuditTrailRepository;
 import com.gl.ceir.config.util.DateUtil;
 
 @Service
@@ -37,8 +37,8 @@ public class StolenAndRecoveryServiceImpl {
 
 	private static final Logger logger = LogManager.getLogger(StolenAndRecoveryServiceImpl.class);
 
-	@Autowired
-	FileStorageProperties fileStorageProperties;
+//	@Autowired
+//	FileStorageProperties fileStorageProperties;
 
 	@Autowired
 	StolenAndRecoveryRepository stolenAndRecoveryRepository;
